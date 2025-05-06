@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Target environment'
+        description: 'PlayStore & Build Environment'
         required: true
         default: 'staging'
         type: choice
@@ -13,12 +13,12 @@ on:
           - staging
           - uat
       backend_baseurl:
-        description: 'Thermondo Backend base URL for ( emp & planungsmappa ) webviews'
+        description: 'Thermondo Backend URL'
         required: false
         default: "https://backend-staging.thermondo.de"
         type: string
       host:
-        description: 'Robin Host URL ( Application Backend BASE_URL )'
+        description: 'Robin Backend URL'
         required: false
         default: "https://craftspeople-service-staging.thermondo.de"
         type: string
@@ -85,7 +85,7 @@ jobs:
   
 
             
-#   deploy:
+   deploy:
 #     name: Deploy to Playstore
 #     runs-on: ubuntu-latest
 #     permissions:
@@ -127,5 +127,16 @@ jobs:
 #       - name: Set Version Name
 #         run: echo "VERSION=$(./scripts/get-latest-release-version.sh)" >> $GITHUB_ENV
 
-#       - name: Build all build type and flavor permutations
-#         run: ./gradlew publishReleaseBundle
+       - name: Build all build type and flavor permutations
+         run: |
+           if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+             echo "Publishing Production Bundle"
+#             ./gradlew publishProductionBundle
+           elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
+             echo "Publishing Staging Bundle"
+#             ./gradlew publishStagingReleaseBundle
+           elif [[ "${{ github.event.inputs.environment }}" == "uat" ]]; then
+             echo "Publishing UAT Bundle"
+#             ./gradlew publishUatBundle
+           fi
+
