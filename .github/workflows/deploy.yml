@@ -21,10 +21,6 @@ on:
         required: false
         default: "https://craftspeople-service-staging.thermondo.de"
         type: string
-      client_id:
-        description: 'Google Client ID'
-        required: false
-        type: string
 
 
 env:
@@ -42,14 +38,9 @@ env:
   THERMONDO_PRODUCTION_BACKEND_BASEURL: ${{ inputs.environment == 'production' && inputs.backend_baseurl || '' }}
   THERMONDO_STAGING_BACKEND_BASEURL: ${{ inputs.environment == 'staging' && inputs.backend_baseurl || '' }}
   THERMONDO_UAT_BACKEND_BASEURL: ${{ inputs.environment == 'uat' && inputs.backend_baseurl || '' }}
-        
   PRODUCTION_HOST: ${{ inputs.environment == 'production' && inputs.host || '' }}
   STAGING_HOST: ${{ inputs.environment == 'staging' && inputs.host || '' }}
   UAT_HOST: ${{ inputs.environment == 'uat' && inputs.host || '' }}
-        
-  PRODUCTION_CLIENT_ID: ${{ inputs.environment == 'production' && inputs.client_id || '' }}
-  STAGING_CLIENT_ID: ${{ inputs.environment == 'staging' && inputs.client_id || '' }}
-  UAT_CLIENT_ID: ${{ inputs.environment == 'uat' && inputs.client_id || '' }}
         
 
 concurrency:
@@ -60,29 +51,26 @@ jobs:
     manaul:
       runs-on: ubuntu-latest
       steps:
-        - name: Checkout
+        - name: Echo all inputs
           run: |
-            echo "${{ inputs.THERMONDO_PRODUCTION_BACKEND_BASEURL}}"
-            echo "${{ inputs.THERMONDO_PRODUCTION_BACKEND_BASEURL }}"
-            echo "${{ inputs.THERMONDO_STAGING_BACKEND_BASEURL }}"
-            echo "${{ inputs.THERMONDO_UAT_BACKEND_BASEURL }}"
-            echo "${{ inputs.PRODUCTION_HOST }}"
-            echo "${{ inputs.STAGING_HOST }}"
-            echo "${{ inputs.UAT_HOST }}"
-            echo "${{ inputs.PRODUCTION_CLIENT_ID }}"
-            echo "${{ inputs.STAGING_CLIENT_ID }}"
-            echo "${{ inputs.UAT_CLIENT_ID }}"
+            echo "Environment: ${{ github.event.inputs.environment }}"
+            echo "Backend Base URL: ${{ github.event.inputs.backend_baseurl }}"
+            echo "Host: ${{ github.event.inputs.host }}"
+            echo "Client ID: ${{ github.event.inputs.client_id }}"
+            echo "Manual Version Name: ${{ github.event.inputs.manual_version_name }}"
+            echo "Manual Version Code: ${{ github.event.inputs.manual_version_code }}"
+            echo "Publish to Store: ${{ github.event.inputs.publish_to_store }}"
   
 
             
     deploy:
-     name: Deploy to Playstore
-     runs-on: ubuntu-latest
-     permissions:
+      name: Deploy to Playstore
+      runs-on: ubuntu-latest
+      permissions:
        contents: read
-     timeout-minutes: 90
+      timeout-minutes: 90
 
-     steps:
+      steps:
 #       - name: Checkout
 #         uses: actions/checkout@v4
 #         with:
