@@ -48,7 +48,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-    manaul:
+    echo_all_inputs:
       runs-on: ubuntu-latest
       steps:
         - name: Echo all inputs
@@ -56,10 +56,6 @@ jobs:
             echo "Environment: ${{ github.event.inputs.environment }}"
             echo "Backend Base URL: ${{ github.event.inputs.backend_baseurl }}"
             echo "Host: ${{ github.event.inputs.host }}"
-            echo "Client ID: ${{ github.event.inputs.client_id }}"
-            echo "Manual Version Name: ${{ github.event.inputs.manual_version_name }}"
-            echo "Manual Version Code: ${{ github.event.inputs.manual_version_code }}"
-            echo "Publish to Store: ${{ github.event.inputs.publish_to_store }}"
   
 
             
@@ -71,13 +67,13 @@ jobs:
       timeout-minutes: 90
 
       steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-#         with:
-#           submodules: true
-#           ssh-key: ${{ secrets.SSH_KEY }}
-#           ref: ${{ github.event.pull_request.head.ref }}
-#           fetch-depth: 0
+       - name: Checkout
+         uses: actions/checkout@v4
+         with:
+           submodules: true
+           ssh-key: ${{ secrets.SSH_KEY }}
+           ref: ${{ github.event.pull_request.head.ref }}
+           fetch-depth: 0
 
 #       - name: setup JDK
 #         uses: actions/setup-java@v4
@@ -93,20 +89,20 @@ jobs:
 #       - name: Validate Gradle Wrapper
 #         uses: gradle/actions/wrapper-validation@v4
 
-#       - name: Cache and Restore BuildCache
-#         uses: actions/cache@v4
-#         with:
-#           path: "**/build-cache/**"
-#           key: build-${{ github.sha }}
-#           restore-keys: |
-#             build-${{ github.sha }}
-#             build-
+       - name: Cache and Restore BuildCache
+         uses: actions/cache@v4
+         with:
+           path: "**/build-cache/**"
+           key: build-${{ github.sha }}
+           restore-keys: |
+             build-${{ github.sha }}
+             build-
 
 
         # Generate version information based on branch name and timestamp
-        - name: Generate version information
-          id: version
-          run: |
+       - name: Generate version information
+         id: version
+         run: |
             # Get current branch name
             BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
             echo "Current branch: $BRANCH_NAME"
@@ -134,13 +130,13 @@ jobs:
             echo "VERSION=$VERSION_NAME" >> $GITHUB_ENV
 
           
-        - name: Build and release
-          run: |
-            if [[ "${{ inputs.environment }}" == "staging" ]]; then
+       - name: Build and release
+         run: |
+           if [[ "${{ inputs.environment }}" == "staging" ]]; then
               echo "Publishing Staging Bundle"
               #./gradlew publishStagingReleaseBundle
-            elif [[ "${{ inputs.environment }}" == "uat" ]]; then
+           elif [[ "${{ inputs.environment }}" == "uat" ]]; then
               echo "Publishing UAT Bundle"
               #./gradlew publishUatBundle
-            fi
+           fi
 
