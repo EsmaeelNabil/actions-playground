@@ -115,14 +115,9 @@ jobs:
             TIMESTAMP=$(date +'%Y%m%d-%H%M')
           
             # Generate version name from branch and timestamp
-            # For main/master branches, use a simpler format
-            if [[ "$BRANCH_NAME" == "main" || "$BRANCH_NAME" == "master" ]]; then
-               VERSION_NAME="$(date +'%Y.%m.%d')"
-            else
-               # Truncate branch name if too long (max 10 chars)
-              SHORT_BRANCH=$(echo "$CLEAN_BRANCH" | cut -c 1-10)
-              VERSION_NAME="${SHORT_BRANCH}-${TIMESTAMP}"
-            fi
+            SHORT_BRANCH=$(echo "$CLEAN_BRANCH" | cut -c 1-10)
+            VERSION_NAME="${SHORT_BRANCH}-${TIMESTAMP}"
+            
             echo "Version name: $VERSION_NAME"
           
             # Set outputs for use in later steps
