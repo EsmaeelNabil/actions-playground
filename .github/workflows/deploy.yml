@@ -85,14 +85,14 @@ jobs:
   
 
             
-   deploy:
-#     name: Deploy to Playstore
-#     runs-on: ubuntu-latest
-#     permissions:
-#       contents: read
-#     timeout-minutes: 90
+    deploy:
+     name: Deploy to Playstore
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+     timeout-minutes: 90
 
-#     steps:
+     steps:
 #       - name: Checkout
 #         uses: actions/checkout@v4
 #         with:
@@ -127,16 +127,17 @@ jobs:
 #       - name: Set Version Name
 #         run: echo "VERSION=$(./scripts/get-latest-release-version.sh)" >> $GITHUB_ENV
 
-       - name: Build all build type and flavor permutations
-         run: |
-           if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-             echo "Publishing Production Bundle"
-#             ./gradlew publishProductionBundle
-           elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
-             echo "Publishing Staging Bundle"
-#             ./gradlew publishStagingReleaseBundle
-           elif [[ "${{ github.event.inputs.environment }}" == "uat" ]]; then
-             echo "Publishing UAT Bundle"
-#             ./gradlew publishUatBundle
-           fi
+        - name: Build all build type and flavor permutations
+          run: |
+            echo "Building all build type and flavor permutations"
+            if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+              echo "Publishing Production Bundle"
+              #./gradlew publishProductionBundle
+            elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
+              echo "Publishing Staging Bundle"
+              #./gradlew publishStagingReleaseBundle
+            elif [[ "${{ github.event.inputs.environment }}" == "uat" ]]; then
+              echo "Publishing UAT Bundle"
+              #./gradlew publishUatBundle
+            fi
 
