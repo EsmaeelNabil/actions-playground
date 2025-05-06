@@ -13,15 +13,17 @@ on:
           - staging
           - uat
       backend_baseurl:
-        description: 'Backend base URL'
+        description: 'Thermondo Backend base URL for ( emp & planungsmappa ) webviews'
         required: false
+        default: "https://backend-staging.thermondo.de"
         type: string
       host:
-        description: 'Host URL'
+        description: 'Robin Host URL ( Application Backend BASE_URL )'
         required: false
+        default: "https://craftspeople-service-staging.thermondo.de"
         type: string
       client_id:
-        description: 'Client ID'
+        description: 'Client ID ( google auth, pick one based on the env for auth to work )'
         required: false
         type: string
       version_name:
