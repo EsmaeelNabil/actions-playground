@@ -124,8 +124,8 @@ jobs:
 #             build-${{ github.sha }}
 #             build-
 
-#       - name: Set Version Name
-#         run: echo "VERSION=$(./scripts/get-latest-release-version.sh)" >> $GITHUB_ENV
+        - name: Set Version Name
+          run: echo "VERSION=$(./scripts/get-latest-release-version.sh)" >> $GITHUB_ENV
 
         - name: Build all build type and flavor permutations
           run: |
