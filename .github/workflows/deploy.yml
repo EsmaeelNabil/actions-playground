@@ -1,4 +1,4 @@
-name: Deploy to Playstore
+name: Manual Deploy to Playstore
 
 on:
   workflow_dispatch:
