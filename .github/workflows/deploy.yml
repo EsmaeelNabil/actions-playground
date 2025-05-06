@@ -9,7 +9,6 @@ on:
         default: 'staging'
         type: choice
         options:
-          - production
           - staging
           - uat
       backend_baseurl:
@@ -23,19 +22,10 @@ on:
         default: "https://craftspeople-service-staging.thermondo.de"
         type: string
       client_id:
-        description: 'Client ID ( google auth, pick one based on the env for auth to work )'
+        description: 'Google Client ID'
         required: false
         type: string
-      version_name:
-        description: 'Version name'
-        required: true
-        default: '1.0.0'
-        type: string
-      version_code:
-        description: 'Version code'
-        required: true
-        default: '1'
-        type: string
+
 
 env:
 #   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -124,19 +114,44 @@ jobs:
 #             build-${{ github.sha }}
 #             build-
 
-        - name: Set Version Name
-          run: echo "VERSION=$(./scripts/get-latest-release-version.sh)" >> $GITHUB_ENV
 
-        - name: Build all build type and flavor permutations
+        # Generate version information based on branch name and timestamp
+        - name: Generate version information
+          id: version
           run: |
-            echo "Building all build type and flavor permutations"
-            if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-              echo "Publishing Production Bundle"
-              #./gradlew publishProductionBundle
-            elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
+            # Get current branch name
+            BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+            echo "Current branch: $BRANCH_NAME"
+            
+            # Clean branch name (remove special characters, convert to lowercase)
+            CLEAN_BRANCH=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+            echo "Cleaned branch name: $CLEAN_BRANCH"
+          
+            # Get current timestamp
+            TIMESTAMP=$(date +'%Y%m%d-%H%M')
+          
+            # Generate version name from branch and timestamp
+            # For main/master branches, use a simpler format
+            if [[ "$BRANCH_NAME" == "main" || "$BRANCH_NAME" == "master" ]]; then
+               VERSION_NAME="$(date +'%Y.%m.%d')"
+            else
+               # Truncate branch name if too long (max 10 chars)
+              SHORT_BRANCH=$(echo "$CLEAN_BRANCH" | cut -c 1-10)
+              VERSION_NAME="${SHORT_BRANCH}-${TIMESTAMP}"
+            fi
+            echo "Version name: $VERSION_NAME"
+          
+            # Set outputs for use in later steps
+            echo "Generated VERSION will be = $VERSION_NAME"
+            echo "VERSION=$VERSION_NAME" >> $GITHUB_ENV
+
+          
+        - name: Build and release
+          run: |
+            if [[ "${{ inputs.environment }}" == "staging" ]]; then
               echo "Publishing Staging Bundle"
               #./gradlew publishStagingReleaseBundle
-            elif [[ "${{ github.event.inputs.environment }}" == "uat" ]]; then
+            elif [[ "${{ inputs.environment }}" == "uat" ]]; then
               echo "Publishing UAT Bundle"
               #./gradlew publishUatBundle
             fi
